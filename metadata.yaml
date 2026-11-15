@@ -1,0 +1,7 @@
+name: astrbot_plugin_breeze_tts
+display_name: Breeze 语音
+desc: 按概率把 bot 的 LLM 回复转成 Breeze TTS 2 语音，并根据回复内容的情绪生成语气指导和 [笑]/[叹气] 等行内标签。
+help: /breeze 查看状态；管理员指令：/breeze开 /breeze关（本会话）、/breeze全局开 /breeze全局关、/breeze概率 <0-1>、/breeze说 <文本>
+version: v0.1.7
+author: 毛团
+repo: https://github.com/danielsunrise/astrbot_plugin_breeze_tts

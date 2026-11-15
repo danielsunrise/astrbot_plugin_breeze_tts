@@ -1,0 +1,183 @@
+{
+  "enabled": {
+    "description": "总开关",
+    "type": "bool",
+    "default": true
+  },
+  "base_url": {
+    "description": "Breeze TTS 地址",
+    "type": "string",
+    "hint": "Breeze TTS 2 服务的地址",
+    "default": "http://127.0.0.1:7860"
+  },
+  "probability": {
+    "description": "回复转语音的概率",
+    "type": "float",
+    "slider": {
+      "min": 0,
+      "max": 1,
+      "step": 0.01
+    },
+    "default": 0.15
+  },
+  "platforms": {
+    "description": "生效的平台类型",
+    "type": "list",
+    "hint": "填平台类型名，如 aiocqhttp、telegram、qq_official；留空则全部平台生效",
+    "default": [
+      "aiocqhttp"
+    ]
+  },
+  "session_whitelist": {
+    "description": "会话白名单",
+    "type": "list",
+    "hint": "填 unified_msg_origin（/breeze 可查看当前会话的值）；留空表示不限制",
+    "default": []
+  },
+  "session_blacklist": {
+    "description": "会话黑名单",
+    "type": "list",
+    "hint": "这些会话永远不转语音",
+    "default": []
+  },
+  "sender_whitelist": {
+    "description": "发言人白名单",
+    "type": "list",
+    "hint": "填 QQ 号等发送者 ID；只有这些人的消息引出的回复才转语音。留空表示不限制",
+    "default": []
+  },
+  "min_len": {
+    "description": "最短字数",
+    "type": "int",
+    "hint": "清理后不足这个字数的回复不转语音",
+    "default": 2
+  },
+  "max_len": {
+    "description": "最长字数",
+    "type": "int",
+    "hint": "清理后超过这个字数的回复不转语音（Breeze 约 1 倍实时，太长会让回复等很久）",
+    "default": 100
+  },
+  "skip_url_and_code": {
+    "description": "含链接或代码块时不转语音",
+    "type": "bool",
+    "default": true
+  },
+  "strip_actions": {
+    "description": "朗读时去掉括号里的动作描写",
+    "type": "bool",
+    "hint": "如（歪头）(摸摸头)，只影响语音，不影响文字",
+    "default": true
+  },
+  "dual_output": {
+    "description": "语音和文字一起发",
+    "type": "bool",
+    "default": false
+  },
+  "model_mode": {
+    "description": "使用的语音模型",
+    "type": "string",
+    "hint": "current = 不检查，用服务当前加载的模型（官方 Breeze 服务选这个）；填 base 或 LoRA 名 = 需要支持 /playground 接口的服务（如 breeze-tts-v100），只在服务当前加载的正好是这个模型时才合成，插件不会自动切换模型",
+    "default": "current"
+  },
+  "voice_instruction": {
+    "description": "固定音色描述",
+    "type": "text",
+    "hint": "放在语气指导前面，固定声音身份。用了参考音频时这一项不生效。",
+    "default": "一位温柔亲切的年轻女性，声音清晰自然。"
+  },
+  "speed_hint": {
+    "description": "固定语速要求",
+    "type": "string",
+    "hint": "每条语音都加在语气指导末尾；情绪分析给出的语速/快慢/停顿描述会被过滤掉。留空则不加",
+    "default": "语速自然平稳，不要太快"
+  },
+  "ref_audio_path": {
+    "description": "参考音频路径（可选）",
+    "type": "string",
+    "hint": "AstrBot 所在机器上的 wav 路径。填了就走 Voice Direction：保持参考音色，只用情绪做语气指导。需同时填参考文字。",
+    "default": ""
+  },
+  "ref_text": {
+    "description": "参考音频的准确文字",
+    "type": "string",
+    "default": ""
+  },
+  "cfg_scale": {
+    "description": "指导强度 cfg_scale",
+    "type": "float",
+    "hint": "越大越听语气指导，但更慢。官方建议 4；1 = 关闭引导",
+    "default": 3.0
+  },
+  "seed": {
+    "description": "随机种子",
+    "type": "int",
+    "hint": "固定种子能让音色更稳定；-1 = 每次随机",
+    "default": 42
+  },
+  "request_timeout": {
+    "description": "合成超时（秒）",
+    "type": "int",
+    "default": 120
+  },
+  "busy_wait": {
+    "description": "Breeze 忙时最多等待（秒）",
+    "type": "int",
+    "hint": "Breeze 一次只处理一条，网页或别的请求在用时会排队等",
+    "default": 30
+  },
+  "emotion": {
+    "description": "情绪识别",
+    "type": "object",
+    "items": {
+      "mode": {
+        "description": "识别方式",
+        "type": "string",
+        "options": [
+          "llm",
+          "meme",
+          "off"
+        ],
+        "hint": "llm = 额外调一次模型分析情绪（失败时退回 meme）；meme = 只用表情包插件的 &&happy&& 标记映射；off = 不加情绪",
+        "default": "llm"
+      },
+      "provider_id": {
+        "description": "情绪分析用的模型",
+        "type": "string",
+        "_special": "select_provider",
+        "hint": "建议选一个快的小模型；不选则用当前会话的聊天模型",
+        "default": ""
+      },
+      "timeout": {
+        "description": "情绪分析超时（秒）",
+        "type": "int",
+        "default": 20
+      },
+      "use_instruction": {
+        "description": "把情绪写进语气指导（instruction）",
+        "type": "bool",
+        "default": true,
+        "hint": "关掉后完全不发语气指导（连固定音色描述和语速要求也不发），音色最接近 LoRA 训练时的原声，情绪只靠 [笑] 等行内标签"
+      },
+      "inline_tags": {
+        "description": "允许插入行内声音标签",
+        "type": "bool",
+        "hint": "Breeze 会真的笑出来或叹气；用哪些见下一项",
+        "default": true
+      },
+      "allowed_tags": {
+        "description": "允许的行内标签",
+        "type": "list",
+        "hint": "可选 [笑] [叹气] [咳嗽] [清嗓子]。实测 [笑] 效果最好，[叹气] 有时不明显",
+        "default": [
+          "[笑]"
+        ]
+      },
+      "max_tags": {
+        "description": "每条最多几个行内标签",
+        "type": "int",
+        "default": 2
+      }
+    }
+  }
+}
